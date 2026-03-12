@@ -132,5 +132,45 @@ These two areas are currently the most likely factors behind the issue and behav
   ملاحظة إضافية:
   إذا كنت تريد تغيير هذا الرابط محلياً (على جهازك) لتجربة شيء ما، فستجده في ملف الإعدادات الخاص
   بالمشروع:
-   * المسار: Kapsarc.College/Kapsarc.College/appsettings.json (أو appsettings.Development.json).
+   * المسار: Kapsarc.College/Kapsarc.College/appsettings.json (أو appsettings.Development.json)
+
+
+
+
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+✦ الرابط الصحيح الذي يجب وضعه في بيئة الـ UAT (بناءً على ملف الـ README.md الموجود في مشروعك) هو:
+
+  https://kapsarc-college.dev-uat.kogifi.com/
+
+
+  كيف سيصبح السطر في ملف k8s/deploy-uat.yaml.template؟
+
+  سيكون هكذا:
+
+   1 - Key: Umbraco__CMS__WebRouting__UmbracoApplicationUrl
+   2   Value: https://kapsarc-college.dev-uat.kogifi.com/
+
+
+  لماذا هذا الرابط تحديداً؟
+   1. بروتوكول HTTPS: لأن الموقع يعمل بشهادة أمان في البيئة الخارجية.
+   2. الـ Domain: هذا هو العنوان الذي يدخل عليه المختبرون أو العميل لمشاهدة نسخة الـ UAT.
+   3. بدون المنفذ 8080: لأن Nginx هو الذي يستقبل الطلبات على المنفذ الافتراضي (80/443) ثم يمررها
+      داخلياً للتطبيق، لذا يجب أن يعرف Umbraco عنوانه "الخارجي" الحقيقي.
+
+
+  تنبيه: تأكد من وجود الـ / في نهاية الرابط لضمان عدم حدوث مشاكل في المسارات (Paths) داخل Umbraco.
+
+
+
+
+
+
+
+
+
+
+
+.
    * داخل كود الـ JSON: ابحث عن Umbraco -> CMS -> WebRouting -> UmbracoApplicationUrl.
