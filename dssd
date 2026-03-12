@@ -1,0 +1,136 @@
+Umbraco Deployment Troubleshooting Report
+We checked the deployment pipeline and confirmed that Azure DevOps is building and pushing the correct Docker image, and Alibaba ECI is pulling and running the latest image SHA correctly. From the infrastructure side the deployment process looks normal.
+During the runtime inspection we noticed repeated application errors in the logs like:
+
+"System.UriFormatException: Invalid URI: The hostname could not be parsed"
+This usually indicates that the application is receiving an unexpected host or URL format from the reverse proxy layer.
+
+Based on the current findings we recommend reviewing the following points:
+In the nginx configuration, it may be useful to add the following header to ensure the backend receives the original host correctly:
+
+proxy_set_header X-Forwarded-Host $host;
+
+In the deployment template (k8s/deploy-uat.yaml.template), the environment variable currently sets the application URL to localhost:
+
+Umbraco_CMSWebRouting_UmbracoApplicationUrl: http://localhost:8080
+
+Since the application is accessed through the UAT domain behind nginx, this value should probably reflect the actual public UAT URL instead of localhost.
+
+These two areas are currently the most likely factors behind the issue and behavior observed after deployment
+
+
+
+
+
+
+
+ نعم، هذا التقرير صحيح جداً ودقيق تقنياً (Professional and Spot-on). النقاط التي ذكرتها هي المسببات
+  الكلاسيكية لمشاكل الـ Routing والـ Background Tasks في Umbraco عند تشغيله داخل Docker/Kubernetes
+  خلف Proxy.
+
+  إليك تفصيل لماذا هذه الحلول صحيحة بناءً على بنية Umbraco 13 (التي يستخدمها مشروعك):
+
+
+  1. تحليل خطأ UriFormatException
+  1. تحليل خطأ UriFormatException
+  1. تحليل خطأ UriFormatException
+  1. تحليل خطأ UriFormatException
+  1. تحليل خطأ UriFormatException
+  1. تحليل خطأ UriFormatException
+  1. تحليل خطأ UriFormatException
+  هذا الخطأ في Umbraco غالباً ما يحدث عندما تحاول المنصة تحديد "الرابط الأساسي" (Absolute URL) الخاص
+  بها للقيام بمهام خلفية (مثل الـ Keep Alive أو الـ Scheduled Publishing). إذا كان الرابط المسجل هو
+  localhost:8080 بينما الطلب القادم من الخارج هو uat.domain.com عبر Nginx، يحدث تضارب أو فشل في
+  التحليل (Parsing) إذا لم يتم تمرير الـ Headers بشكل صحيح.
+
+
+  2. نقطة الـ Nginx (X-Forwarded-Host)
+  لماذا هي ضرورية؟
+  بدون هذا الـ Header، يظن تطبيق الـ .NET أن الرابط هو localhost (لأن Nginx هو من يكلمه محلياً).
+  بإضافة:
+  proxy_set_header X-Forwarded-Host $host;
+  أنت تخبر التطبيق بالـ Domain الحقيقي الذي طلبه المستخدم.
+
+  إضافة مقترحة: يفضل أيضاً التأكد من تمرير البروتوكول (Http vs Https) عبر:
+  proxy_set_header X-Forwarded-Proto $scheme;
+
+
+  3. نقطة الـ UmbracoApplicationUrl
+  لماذا هي ضرورية؟
+  في بيئة الـ Kubernetes/ECI، القيمة http://localhost:8080 تجعل التطبيق يحاول "مناداة نفسه" داخلياً
+  بعنوان لا يعبر عن هويته الخارجية.
+   * الحل الصحيح: يجب أن تكون هذه القيمة هي الرابط الكامل للـ UAT، مثلاً:
+      Umbraco__CMS__WebRouting__UmbracoApplicationUrl: https://kapsarc-college.dev-uat.kogifi.com/
+
+  ---
+
+
+  مراجعة سريعة للملفات للتأكد (اختياري)
+  سألقي نظرة سريعة على ملف الـ k8s/deploy-uat.yaml.template لنتأكد من الصيغة:
+
+╭─────────────────────────────────────────────────────────────────────────────────────────────╮
+│ ✓  ReadFile k8s\deploy-uat.yaml.template                                                    │
+│                                                                                             │
+╰─────────────────────────────────────────────────────────────────────────────────────────────╯
+✦ تأكيدي التام على صحة التقرير، وتحديداً في ملف k8s/deploy-uat.yaml.template:
+
+
+   1. المشكلة الواضحة: في السطر 45:
+      Key: Umbraco__CMS__WebRouting__UmbracoApplicationUrl
+      Value: http://localhost:8080
+      هذه القيمة خاطئة تماماً لبيئة الـ UAT. يجب أن تكون:
+      Value: https://kapsarc-college.dev-uat.kogifi.com/ (أو الرابط الفعلي للـ UAT).
+
+
+   2. إضافة الـ Headers في Nginx: سألقي نظرة سريعة على ملف الـ Nginx للتأكد:
+
+╭─────────────────────────────────────────────────────────────────────────────────────────────╮
+│ ✓  ReadFile k8s\nginx\default.conf.template                                                 │
+│                                                                                             │
+╰─────────────────────────────────────────────────────────────────────────────────────────────╯
+✦ الخلاصة:
+  التقرير الذي تراجعه ممتاز وصحيح.
+
+
+  توصياتي للتعديل بناءً على رؤيتك للملفات:
+
+
+   1. في ملف deploy-uat.yaml.template:
+       * قم بتغيير قيمة Umbraco__CMS__WebRouting__UmbracoApplicationUrl من http://localhost:8080
+         إلى الرابط الفعلي (مثل: https://kapsarc-college.dev-uat.kogifi.com/).
+
+
+   2. في ملف default.conf.template (Nginx):
+       * لاحظت أن proxy_set_header Host $host; موجودة بالفعل (السطر 25).
+       * لكن، التقرير يقترح إضافة proxy_set_header X-Forwarded-Host $host;. في تطبيقات .NET 8 (مثل
+         مشروعك)، يفضل إضافة الـ X-Forwarded-Host بوضوح لأن الـ ForwardedHeadersMiddleware يعتمد
+         عليها بشكل أساسي.
+
+
+✦ الرابط الذي يجب تغييره موجود في الملف التالي:
+
+
+  1. الملف الأساسي (Deployment Template):
+   * المسار: k8s/deploy-uat.yaml.template
+   * السطر (تقريباً): 45
+   * القيمة الحالية: Value: http://localhost:8080
+   * ماذا تغيره؟: قم بتغيير http://localhost:8080 لتصبح رابط الـ UAT الفعلي (مثلاً:
+     https://kapsarc-college.dev-uat.kogifi.com/).
+
+  ---
+
+
+  2. ملف الـ Nginx (إذا أردت إضافة الـ Header المقترح):
+   * المسار: k8s/nginx/default.conf.template
+   * السطر (تقريباً): 25-30
+   * الإضافة: يمكنك إضافة السطر التالي تحت الـ proxy_set_header الموجودة:
+   1     proxy_set_header X-Forwarded-Host $host;
+
+  ---
+
+
+  ملاحظة إضافية:
+  إذا كنت تريد تغيير هذا الرابط محلياً (على جهازك) لتجربة شيء ما، فستجده في ملف الإعدادات الخاص
+  بالمشروع:
+   * المسار: Kapsarc.College/Kapsarc.College/appsettings.json (أو appsettings.Development.json).
+   * داخل كود الـ JSON: ابحث عن Umbraco -> CMS -> WebRouting -> UmbracoApplicationUrl.
