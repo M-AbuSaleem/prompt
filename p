@@ -35,6 +35,12 @@ We have an Umbraco-based website deployed through Azure DevOps pipelines to a co
 
 Recently we started facing a strange issue in the UAT environment.
 
+
+
+$ gemini
+Loaded cached credentials.
+No input provided via stdin. Input can be provided by piping data into gemini or using the --prompt option.
+
 The problem is that when editors make changes to content in Umbraco and publish them, the changes appear correctly at first. However, after some time, the content reverts back to a previous version automatically.
 
 Important details:
