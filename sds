@@ -1,0 +1,68 @@
+To run the KSPP Website project locally, follow these steps. You can choose to run the entire stack using Docker for
+  simplicity or set up each component individually for a more tailored development experience.
+
+
+  Prerequisites
+   - Docker Desktop (installed and running)
+   - Node.js (v18 or higher)
+   - .NET 8 SDK
+
+  ---
+
+  Option 1: Run with Docker (Easiest)
+  This method builds and orchestrates all services (Frontend, Backend, and SQL Database) automatically.
+
+
+   1. Open your terminal in the project root directory.
+   2. Run the following command:
+   1    docker-compose up --build
+   3. Once the containers are running:
+      - Website: http://localhost:8080
+      - Umbraco Backoffice: http://localhost:8080/umbraco
+      - Default Credentials: admin@kapsarc.com / admin@kapsarc.com (as per appsettings.Development.json)
+
+  ---
+
+  Option 2: Local Development Setup (Recommended for coding)
+  Use this method if you plan to make frequent changes to the code and want faster feedback.
+
+  1. Start the Database
+  Use Docker to run the SQL Server instance required by Umbraco:
+
+
+   1 docker-compose up db -d
+
+  2. Build and Watch the Frontend
+  The frontend assets must be built and copied to the backend's wwwroot directory.
+   1. Navigate to the frontend directory:
+   1    cd frontend
+   2. Install dependencies:
+
+
+   1    npm install
+   3. Run the build script with "watch" mode (keeps running and updates on changes):
+   1    npm run build:umbraco
+
+
+  3. Run the Backend (.NET)
+   1. Open a new terminal and navigate to the Umbraco project:
+   1    cd "Kapsarc.College\Kapsarc.College"
+   2. Configure Connection String: Ensure your appsettings.Development.json points to the local Docker database. If it's
+      missing, you can add this to the ConnectionStrings section:
+
+
+   1    "ConnectionStrings": {
+   2      "umbracoDbDSN":
+     "Server=localhost,1433;Database=kapsarc-college-dev;User=sa;Password=password-1234;Encrypt=false;TrustServerCertifi
+     cate=true;"
+   3    }
+   3. Run the application:
+   1    dotnet run
+   4. The terminal output will provide the local URL (typically https://localhost:5001 or http://localhost:5000).
+
+
+  Notes
+   - Data Import: The project uses uSync. On the first run, it will automatically import the site structure and content
+     from the uSync/v9 folder into your database.
+   - Media Files: If images are missing, they are stored in Kapsarc.College/Kapsarc.College/wwwroot/media. Ensure this
+     folder is present and contains the assets.
