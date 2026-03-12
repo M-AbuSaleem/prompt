@@ -1,3 +1,75 @@
-$ gemini
-Loaded cached credentials.
-No input provided via stdin. Input can be provided by piping data into gemini or using the --prompt option.
+
+  1. Project Identification
+  This is an Umbraco CMS application built on .NET (likely version 6.0 or 8.0). It features a "decoupled" frontend
+  architecture located in the frontend/ directory and is designed to be containerized using Docker for deployment to a
+  Kubernetes (K8s) cluster on Alibaba Cloud.
+
+
+  2. Required Environment
+  To run this project locally, you will need:
+   * .NET SDK: (Version 6.0 or higher).
+   * SQL Server: For the Umbraco database.
+   * Node.js & npm: To build the frontend assets.
+   * Docker Desktop: Optional, but recommended for running the full stack (Web + DB + Nginx) via containers.
+   * Visual Studio 2022 or VS Code.
+
+
+  3. Step-by-Step Local Setup
+
+
+  Step A: Build the Frontend
+  The frontend generates the CSS and JS files required by the CMS.
+   1. Navigate to the frontend/ directory in your terminal.
+   2. Run npm install to install dependencies.
+   3. Run npm run build to generate the production assets.
+
+
+  Step B: Setup the Database
+   1. Open SQL Server and create a new database (e.g., KapsarcDb).
+   2. Use the Kasparc.Db\dev_backup.sql file to restore the database, or execute the scripts in Kasparc.Db\init-db.sql.
+
+
+  Step C: Run the .NET Application
+   1. Open the solution file Kapsarc.College\Kapsarc.College.sln in Visual Studio.
+   2. Check the connection string in Kapsarc.College\Kapsarc.College\appsettings.json.
+   3. Press F5 or run dotnet run in the project directory.
+
+  4. Important Files & Folders
+
+
+
+  ┌─────────────────────┬───────────────────────────────────────────────────────────────────────────────────────────┐
+  │ File/Folder         │ Purpose                                                                                   │
+  ├─────────────────────┼───────────────────────────────────────────────────────────────────────────────────────────┤
+  │ Kapsarc.College.sln │ The main solution file for Visual Studio.                                                 │
+  │ appsettings.json    │ Contains configuration and the database connection string.                                │
+  │ docker-compose.yml  │ Orchestrates the Website, Database, and Nginx containers.                                 │
+  │ uSync/              │ Critical folder containing Umbraco definitions (Document Types, etc.) for synchronization │
+  │                     │ between environments.                                                                     │
+  │ azure-pipelines.yml │ Defines the CI/CD pipeline for building and deploying to Azure/Alibaba Cloud.             │
+  │ k8s/                │ Contains Kubernetes deployment templates for Alibaba Cloud.                               │
+  └─────────────────────┴───────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+
+  5. Database Connection
+  Connection settings are located in Kapsarc.College\Kapsarc.College\appsettings.json under the ConnectionStrings
+  section. Look for the key umbracoDbDSN. Ensure the Server, Database, and Credentials match your local SQL Server
+  instance.
+
+
+  6. Deployment Workflow
+  Based on the structure:
+   1. Build: Azure Pipelines triggers a build and creates a Docker Image.
+   2. Registry: The image is pushed to a container registry.
+   3. Deploy: The files in the k8s/ folder are used to deploy the image to Alibaba Cloud Kubernetes.
+   4. Routing: Nginx (configured in k8s/nginx/) acts as a reverse proxy/load balancer.
+
+
+  7. Quick Start for Support/Troubleshooting
+  If you have Docker Desktop installed, the fastest way to see the application running is to execute the following
+  command in the root directory:
+   1 docker-compose up --build
+  This will automatically set up the website, the database, and the Nginx proxy in a unified environment. You can then
+  access the site via localhost (port 80 or as specified in the compose file).
+
