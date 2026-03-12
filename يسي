@@ -1,0 +1,55 @@
+✦ If the website is running but images, logos, or content are missing, it usually means one of three things:
+
+
+   1. Assets weren't copied correctly: The CSS/JS/Images might not be in the right place.
+   2. Missing Media folder: Umbraco stores images in a specific media/ folder that might be empty.
+   3. Missing Content: The database might be empty or needs to be synchronized.
+
+  Let’s troubleshoot this step-by-step:
+
+
+  1. Check for 404 Errors in your Browser
+   * Open the website in your browser.
+   * Press F12 to open Developer Tools.
+   * Go to the Console or Network tab.
+   * If you see many red lines (404 Not Found) for files ending in .css, .js, or .png, then the frontend build didn't
+     copy the files to the right place.
+
+
+  2. Verify the wwwroot folder
+  The Umbraco project needs the files in its wwwroot folder. Please check if these folders exist and have files inside
+  them:
+   * Kapsarc.College/Kapsarc.College/wwwroot/css
+   * Kapsarc.College/Kapsarc.College/wwwroot/js
+   * Kapsarc.College/Kapsarc.College/wwwroot/assets
+
+  If they are empty, run the following in the frontend folder again:
+   1 npm run build:umbraco
+
+
+  3. Check the media folder
+  Umbraco projects have a media/ folder (separate from wwwroot). If you don't have this folder in your project files,
+  all images uploaded through the CMS will be missing.
+   * Check: Kapsarc.College/Kapsarc.College/media/
+   * Solution: Ask the previous team for the media folder, or upload new images via the Umbraco backoffice.
+
+
+  4. Import Content via uSync
+  Since this project has uSync, you might need to tell Umbraco to "import" the settings from the files.
+   1. Go to the Umbraco backoffice (usually https://localhost:XXXX/umbraco).
+   2. Log in (if you have the credentials).
+   3. Go to the Settings section -> uSync.
+   4. Click Import to make sure all page types and configurations are loaded from the files.
+
+
+  5. Check the Homepage node
+   1. In the Umbraco backoffice, go to the Content section.
+   2. Expand the tree. Is there a "Home" node?
+   3. If not, you need to create a homepage node first.
+
+  ---
+
+
+  What to do now?
+  Check your browser console (F12) and tell me what errors you see. Are they 404 errors for images or scripts? This will
+  tell us exactly which part is missing.
