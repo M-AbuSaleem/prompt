@@ -1,0 +1,42 @@
+✦ The error occurs because there is no generic build script in your package.json. Instead, the previous developers
+  defined specific scripts for different purposes.
+
+
+  Based on the package.json file I just read, here are the correct commands you should use:
+
+
+  1. For Local Development (Recommended)
+  This command builds the frontend and automatically copies the files to your Umbraco wwwroot folder. It also stays
+  active and "watches" for any changes you make:
+   1 npm run build:umbraco
+
+  2. For a One-Time Development Build
+  If you just want to build the files once without syncing or watching:
+   1 npm run build:development
+
+
+  3. For Production Build
+  To generate the final, optimized files:
+   1 npm run build:production
+
+  ---
+
+
+  How to fix the "npm run build" error permanently:
+  If you want npm run build to work like you expected, you can add it to your package.json. Open frontend/package.json
+  and update the scripts section like this:
+
+
+   1 "scripts": {
+   2   "build": "npm run build:production",
+   3   "build:umbraco": "webpack build --env development UMBRACO=true --mode=development --progress --watch",
+   4   "build:development": "webpack build --env development --mode=development --progress",
+   5   "build:production": "webpack build --env production --mode=production --progress",
+   6   "start": "webpack serve --env development"
+   7 }
+
+
+  Summary of what to do now:
+   1. Make sure you are in the frontend directory.
+   2. Run npm run build:umbraco.
+   3. Once that finishes (it will stay running), you can start your .NET project in Visual Studio.
