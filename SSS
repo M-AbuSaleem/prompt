@@ -1,1 +1,23 @@
 After using npm run build:umbraco, what files should I transfer to WWROOT?
+https://teams.microsoft.com/meet/33578847970668?p=khVLjC5Njo3IHDYt
+
+
+k8s/deploy-uat.yaml.template
+
+Umbraco_CMSWebRouting_UmbracoApplicationUrl: http://localhost:8080           --------line 40
+
+
+Umbraco_CMSWebRouting_UmbracoApplicationUrl: https://kapsarc-college.dev-uat.kogifi.com/   or   https://test.kspp.edu.sa/
+
+
+
+
+k8s\nginx\default.conf.template 
+
+add
+
+proxy_set_header X-Forwarded-Host $host;
+
+proxy_set_header X-Forwarded-Proto $scheme;
+
+
