@@ -57,11 +57,7 @@
   section. Look for the key umbracoDbDSN. Ensure the Server, Database, and Credentials match your local SQL Server
   instance.
 
-https://allianceforparkingdatastandards.org/
 
-https://github.com/openmobilityfoundation/mobility-data-specification
-
-https://github.com/openmobilityfoundation/curb-data-specification
   6. Deployment Workflow
   Based on the structure:
    1. Build: Azure Pipelines triggers a build and creates a Docker Image.
