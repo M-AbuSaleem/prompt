@@ -1,16 +1,17 @@
+k8s/deploy-uat.yaml.template
 
 Umbraco_CMSWebRouting_UmbracoApplicationUrl: http://localhost:8080
 
 
-Umbraco__CMS__WebRouting__UmbracoApplicationUrl: https://kapsarc-college.dev-uat.kogifi.com/
+Umbraco_CMSWebRouting_UmbracoApplicationUrl: https://kapsarc-college.dev-uat.kogifi.com/
 
 
 
-k8s\nginx\default.conf.template
+k8s\nginx\default.conf.template 
+
+add
 
 proxy_set_header X-Forwarded-Host $host;
 
 proxy_set_header X-Forwarded-Proto $scheme;
-
-
 
