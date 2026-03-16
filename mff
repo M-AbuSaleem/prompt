@@ -1,0 +1,294 @@
+All of them use ReasableDatatypes, Enumerations, LocationReferences, and GeoJSON. Another thing about APDS in general is that APDS does not define HTTP endpoints, RequestResponseHeaders, AuthenticationSchemes, or FaginationPatterns. All of them know that it's Semantics and the database model must be running on the same APDS sample. This is for APDS.
+
+S
+Speaker
+00:30
+CDS is obvious, we know it yesterday, we don't have to go into it once. It's more strict, it has three APIs. The Kerber, the events, and the metrics. And also, the CDS feature is that you have an OpenAPI schema. So if you publish the OpenAPI schema, you can automatically validate. See if you are compliant with the CDS or not. Unlike the BDS. So it's...
+
+S
+Speaker
+01:00
+It's clear, there are certain endpoints, each endpoint will give you a response request and so on So it's very clear in the CDS What are the common things between them? This is what we were talking about, the place meets the kerb zone The identified area meets the kerb area The specific area has no opposite But the idea is that the identified area or specific area in the APTS is still a place
+
+S
+Speaker
+01:28
+It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the same namespace as the place. It's the namespace as the place. It's the namespace as the place. It's the namespace as the place. It's the namespace as the place. It's the namespace as the place. It's the namespace as the place. It's the namespace as the place. It's the namespace as the place. It's the namespace as the place. It's the
+
+S
+Speaker
+01:57
+There are sub places, but even the sub places are still places. Peace be upon you. Peace be upon you too. How are you? I'm good, thank God. I swear to God, I'm fine. Okay, there's a parking space. This is in the APDS, the term for space. And in the CDS, it's called curb space. This is where the slots were.
+
+S
+Speaker
+02:29
+In the CDS, there were slots in the parking lot. - The slots, not the parking lot. - Yes, the slots. In the CDS. - There are slots in the CDS. - Does it differ in the CDS or is it similar? The difference is not big.
+
+S
+Speaker
+02:57
+The difference is that I will tell you the difference between the two. It is true that they have common things, but there are two problems between them.
+
+S
+Speaker
+03:06
+It doesn't differ in concept, you have a space and you have a kerb space The space can be considered a kerb space, the difference is that the first thing is that the space knows things that the kerb space doesn't know, and vice versa This is the first thing, the second thing is that the space is more general, if we want to do something general We can consider the APDS as the canonical domain, we build everything on the APDS
+
+S
+Speaker
+03:32
+and CDS we make it from APDS this is a solution because APDS is more rich but this solution also has a problem I will tell you about it later I will give you the 4 solutions then I will tell you the difference so we have the time based rules and all these things were also in the document these are the things that we can say are similar APDS even knows that it doesn't require GeoJS APDS will tell you that it is normal
+
+S
+Speaker
+04:04
+Look at the array of GeoJSON, GML, OpenLR, PointCoordinates You want to run it XML to high As for the differences, these are the differences The first difference we talked about is that this UML of the data scheme must be run on it The CDS is the creator of the API Strictly, it must be run on it as it is If there is no Kerb Zones, you have broken the CDS compliance The FDS does not have any points, only for the scheme
+
+S
+Speaker
+04:38
+The depth of data model, the APDS is very deep in the rates, rights, financial transactions, credentials, codes, observations, and EV charging. CDS scope is NERV, but it focuses on activity events and utilization. The important point I wanted to mention is that the implementation complexity of the APDS is very high because there is no blueprint ready. CDS can auto-generate the APIs.
+
+S
+Speaker
+05:09
+for all APIs, from the open API to the main one. What is the problem now? The problem that you will find is that there is a contract. A single API service cannot simultaneously satisfy the strict machine validated open API contract and serve the full richness of the APDS project model.
+
+S
+Speaker
+05:35
+Any APDS specific fields added to a CDS endpoint response, for example, including the right specification ID or the right table on a /kerfzones response will cause the CDS schema validation to fail. Why? Because they are not declared for CDS OpenAPI. So if our goal is to be compliant with CDS, we are not compliant at the moment. Why? Because we made a merge with... Well, there are some common things, but...
+
+S
+Speaker
+06:05
+The place has things that are not in the zone and the zone has things that are not in the place. So when we make an endpoint kerb zone and we want to implement both of them and merge the two models, we break the compliance with both of them because we are missing something as a result of merging the two schemas together. So see this schema means that APDS consumers will not receive the object graph they require.
+
+S
+Speaker
+06:38
+and the same thing for CDS so they are mutually exclusive even though they are shared these are conflicts that we can see and they are very dangerous the first conflict that we can see from the APDS and CDS models is that the APDS has 5 levels of inheritance in it in places, it has 5 levels CDS has 3 levels of flat models there is no inheritance it is events, curbs and
+
+S
+Speaker
+07:13
+matrix, each one of them, but they're just, God forbid, they reference the curve or the event, but there's no inheritance, meaning there's no structure inside or between the models. So, okay, that's for the hierarchy. There's, here, also, the access rules are 8 to 12 linked objects, because of the hierarchy, too, which is present in the APDS. But for the CDS, it's a single flat JSON policy object.
+
+S
+Speaker
+07:47
+These are the things I didn't focus on, like Parking Activity and other things. Geometry was also different, because you can write XML here, and here you have to use GeoGauss. This is how we work with GeoGauss, it's not a problem. But these are the things that are complex. What are the solutions that we can reach?
+
+S
+Speaker
+08:16
+Before we explain the flow There are 3 flows and a fourth one that I didn't explain, I don't know what happened First, there is a problem The APTS has one flow, which is the flow of the code This requires you to send the request and return the response in a specific way Why is this a problem? I will say 3 rules and then we can summarize why this is a problem Now we have 3 rules The first solution is that we have the domain
+
+S
+Speaker
+08:52
+And it's not a condition that the canonical domain is different, we can do it No, it can be the canonical domain APDS for example And we make two layers of adapters Which? Yes We will have adapters and canonical domain for example, so we have three services The first service is canonical and the second service is just read-only adapters, this is option A
+
+S
+Speaker
+09:24
+This adapter is a CDS adapter or an APDS adapter What it does is it marks a projection in the database for the things that are compliant with the APDS and the things that are compliant with the CDS Will it be in storage? This is also something that is not considered honestly but for example the general idea is that I want to get a curve zone and I have an example that I implemented I want to get the endpoint of the slash curve zone
+
+S
+Speaker
+09:55
+When I go to get it, I don't get it from a database or... I mean, this process is a two-step process. First, I get it from the canonical model that we have, and then I do mapping for it. Or, to be more precise, this canonical model, this record itself, when we wrote it in the database for the first time, we do mapping for it and store it in the database that is special for CDS, and that's what we did. But, in essence, it's just mapping between the canonical model that we have
+
+S
+Speaker
+10:26
+and the CDS and the same thing for the canonical model and the APDS ok so you're saying here that I have an adapter in the middle between the two if I create something it will be created in the two and if I edit something it will be edited in the two is it the adapter? no, it's in the middle so in the middle we'll have let me explain this is the canonical model ok
+
+S
+Speaker
+10:59
+and this is the first adapter and this is the second adapter in option A what happens? the write goes through the canonical model the read only goes through the adapter of course internally, in realparking we can use our canonical model but those who want to use the CDS or the APDS all the writes must go through who?
+
+S
+Speaker
+11:32
+the canonical model which is the main service we can consider it the implementation of the graph file and the doctors themselves are the ones who do the projection or mapping of the canonical model to the CDS model and the EPDES model but this is a problem that only exists if there is one of them one of the standards
+
+S
+Speaker
+12:01
+Right access or something in right operation, then it's not compliant. Why? Because we're saying that the right must be done through another service, not the same service. The picture is displayed. This is the first option. The second option is the same option, but the adapters here, we add the right's capability, but it's just a proxy.
+
+S
+Speaker
+12:34
+the write is also done by the canonical domain API the first one in the middle, the main one but the write is proxied by the adapter, how does it mean? for example, I want to create a new curve zone what will happen when I create a new curve zone? when I create a new curve zone, I go to the end point of the curve and create a new curve
+
+S
+Speaker
+12:59
+For me and anyone watching this video, this is a complaint because I went to the endpoint of the curb, created a curb request and it's done. What happens in the backend is that the curb service is not what it writes, but the true curb service is what it writes in the canonical model because we don't have a curb domain or an APDS domain. We are just moving to this domain.
+
+S
+Speaker
+13:24
+and this I think is the best solution and also the write API is the one that presesst but the CDS and the APDS here doesn't presesst at all it's just a proxy so we have the option to read and also write in case we want to write but it goes through the canonical domain and this is the most defensible because on paper it's compliant so in reality we don't have this we were writing from
+
+S
+Speaker
+13:55
+the same CDS or the same APDS option C which is the best option but it's hard to achieve is that we all have read and write adapters so the adapters themselves, the CDS and the APDS they are read and write I want to make a new Curb Zone I go to the Curb API I write the new Curb the problem here is that there has to be a bidirectional sync between the adapters and the Canon
+
+S
+Speaker
+14:30
+and this is a layer of complexity and it could lead to corruption of stakes why? because our source of truth is the canonical model that's why it's canonical so if I write something about the curve there could be differences or something missing required in the canonical model itself so these are the three options that we have and honestly this is a small table that compares them in compliance
+
+S
+Speaker
+15:02
+option a is not partially compliant because of the code workflow which is known in APDS option c is more compliant because in essence the read and write are implemented on the APIs themselves so this table shows the
+
+S
+Speaker
+15:27
+The most common option is option B, which is the Request Handling Adapters. These are only handling requests and the rights proxy. I honestly don't know if it will be compliant or if we are cheating them because in the end, the rights proxy is not done by the models themselves. This is a case study of sites.
+
+S
+Speaker
+15:57
+But, so far, any thoughts before we go into this case study? I have something in mind, but I'll continue, and we can discuss it later. Of course, there's a fourth option I didn't put, because it's a trivial solution. The fourth option is that we... Oh, right, I forgot to say something. Now, these three options are working well, but we're facing one problem. At first, we thought we could leave the canonical model
+
+S
+Speaker
+16:32
+It's the APDS, if we're talking about the APDS and the CDS only But if we add anything else from the Open Mobility, anything else that's related to it For example, we can add scooters and things like that The APDS won't be enough for the model of the new things Because the APDS we can consider it static, it's only responsible for the parking It's true that it's a rich model, but it's just a parking
+
+S
+Speaker
+17:04
+Coincidentally, there are many common things between the CURB, but something like events in the CURB is completely different from the events in the APDS. And the same thing is that we face the same problem if we enter any other standard, we will become compliant with us. So this is the problem with these three options in general, that we have one source of truth.
+
+S
+Speaker
+17:30
+and then we apply them, that's the problem the second solution is to see a trivial solution, which is outside the scope of this page we separate them from all services according to each service in any domain, i.e. red parking, APDS only without curve if we put something else, we put CDS but of course, as I said, this is a trivial solution, we separated them completely we don't want one between them
+
+S
+Speaker
+18:01
+Not perfect, but I'm thinking about it in a different way. Let's take a meeting with the Open Mobility Foundation, communicate with them, and set up a meeting with them. And since they're experts in this domain, they can help us with these things. Instead of saying, if we did it this way, we might not be satisfied with the CTS issue.
+
+S
+Speaker
+18:38
+To be honest, I don't have full... I mean, I expected that we won't be compliant because in some cases we are changing the schema. So something like CDS is automatically... Compliance, you can check the validation. It's automatic. Unlike BDS. If we changed the schema, how would we be compliant? Excellent.
+
+S
+Speaker
+19:12
+The way I see it, is to continue with the CDS implementation. CDS only, but let's have a meeting with Open Mobility Foundation because they wrote the article about CDS and APDS. - The APDS together? - Yes. - That's better. - Yes. So, guys, you, Open Mobility Foundation, give me this suggestion and we have the need.
+
+S
+Speaker
+19:43
+to collect both things together. Especially since we are working on the mobility and parking issues. So, what's your suggestions? What's your solutions? Especially since we are at the end of this journey, we would like to be certified in both. Correct. This is how I see it, to be honest. That's right. If there's a chance, we'll have a meeting. That would be a good thing.
+
+S
+Speaker
+20:18
+Do we want to do compliance with CDS and APDS just to be compliant or do we want to use these models in the services themselves? I don't understand your question. We want to change the scheme now to be compliant with APDS and CDS and expose more endpoints.
+
+S
+Speaker
+20:46
+So, are we doing this just because it's compliance or are we doing this because we use it in the application itself? Let me explain, for example, the NPOIL group, this is a curve, you just need to get the curve data, these are the endpoints, and so on. The idea is that we follow the two standards because we have the need for mobility and parking specifics.
+
+S
+Speaker
+21:16
+As you can see, we are not in the parking system and its functionality is not good But there are some parts that were supposed to be here but we stopped them because of the complexity of the code So we said, we can't do this, we need to go to a certain standard to achieve the mobility and functionality that you need
+
+S
+Speaker
+21:46
+So, if we need it like this, why don't we go to the fourth option? Of course, the only problem with the fourth option is that we are separated between the... I mean, what are the issues that can come with the fourth option?
+
+S
+Speaker
+22:20
+True separation between all the models Parking, parking, this is APDS Scooters and other things, this is CDS When we do a separation I have a separate database Or a full domain of the separation of the system
+
+S
+Speaker
+22:38
+Parking domain is the main link of CDS So for example, I will be faced with a problem in this case I got a keystakeholder and asked me In the upper left area for example What are the things I have available from parking and from what is it called? I want to know how many places are in the scooter
+
+S
+Speaker
+23:04
+and there are a few parking spaces this question we can't answer it if we split it easily there must be layers of integration between the two but we can't call them separated this is the lead domain that's special and this is the lead domain that's special right? there are between them and they are common the way we can reach it or the end goal is to have a real time dashboard
+
+S
+Speaker
+23:37
+that shows the parking sessions in real time, the scooter trips in real time, the availability of spaces and zones in real time. This is what we want. CDS provides this, because it's event driven, and the event service is for consumption.
+
+S
+Speaker
+24:04
+and you will go to the matrix and the matrix will put the internal details based on it so for the curb it is clear how it works and how it will work in real time and how you can do the integration and so on but when it comes to the internal functions of the parking to be honest I didn't go into details so I can say that these parts are covered and these parts are not covered
+
+S
+Speaker
+24:36
+But what I know is that there are some similarities between them. Will its addition to the curb service issue affect it? This is what we want to clarify when it comes to the meeting with OMF. We met with them and said that we started the implementation and we have the plan to integrate the curbs issue with the APDS functionality because we have the functionality of parking.
+
+S
+Speaker
+25:10
+So, what's your suggestions that we go this approach without affecting the actual standard that you're doing? The idea is that, for example, if I give you the place in the APDS, it's not recognized as UID. The site in the CDS is recognized as UID.
+
+S
+Speaker
+25:38
+The key itself is called Site ID, the place is not Site ID So how do we make it work between the two in terms of merging? This is what we are waiting for the answer of Open Mobility But the topic from the beginning in terms of compliance with the two standards, there must be changes
+
+S
+Speaker
+26:06
+Definitely, definitely. It could be a combination between fields that are one, between two, the way of APIs, queries, after changing the changes, of course there are queries that will change the APIs. There is a solution to the current situation. We are talking about APDS and CDS only. If we made the APDS the canonical model, then the APDS will not require APIs.
+
+S
+Speaker
+26:37
+not like in the case of codes if we let the APDS be the chronical model and the CDS is the API, the CDS doesn't care how you store it it cares that you have the API it gives you this and that, that's it if we let this be the general and the most common that we do for modeling and the second is the one we use that means the problem is solved but the problem won't be in the APDS and CDS the problem will be if we add any other mobility standard because the APDS won't be sufficient to model these things
+
+S
+Speaker
+27:15
+Let's go to the implementation on CDS and at the same time we need them. Yes, we work on CDS alone. And it will be modernized for CDS completely. A new database with a new schema. Yes. Yesterday, I saw this with Mohamed Nasser.
+
+S
+Speaker
+27:50
+We made an example that has mapping, for example, this is a Git sites, I took a record from the database we have, the development database. This Git sites will bring you what is in the normal database, and this is the canonical model for us, which is for the rep work. We consider it now as a canonical model. As for the care, it is the same as what it is doing, it maps only what is in Git sites,
+
+S
+Speaker
+28:17
+and send back the response even if we go to the implementation itself get_kerp_zones for example, this is it and all it is doing is from the site repository itself it doesn't have a repository, it doesn't have persistence, it just sits with it of course, this approach is not the best solution I'm not talking about the technicalities, I'm just saying that
+
+S
+Speaker
+28:46
+How can we do that? We will do it by mapping between the two So, I think that we will start to take the site Which are the 4 working hours tables We will add another table and put it in Cds We will model it as Cds Excellent Honestly, I tried to make the implementation that I did on the demo that I did a while ago And honestly, I didn't find anything
+
+
+
+
+S
+Speaker
+29:21
+I wanted to show you the way I showed it to the CEO and the business and product guys so you can have an idea but give me some time to find it and you start the implementation and I'll find it and I'll show it I built the backend and the frontend and I showed it and it also had real time view real time view I think it also had the real time dashboard of the capes, right?
